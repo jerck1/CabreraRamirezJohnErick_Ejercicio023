@@ -20,6 +20,12 @@ from sklearn.metrics import confusion_matrix
 #%matplotlib inline
 
 
+# In[30]:
+
+
+from sklearn.metrics import f1_score
+
+
 # In[13]:
 
 
@@ -73,13 +79,84 @@ print(np.shape(X))
 print(np.shape(Y))
 
 
-# In[ ]:
+# In[34]:
 
 
+#Y
+plt.plot(np.arange(50),X[0,:])
 
 
+# In[53]:
 
-# In[ ]:
+
+# Vamos a hacer un split training test
+scaler = StandardScaler()
+x_train, x_test, y_train, y_test = train_test_split(X, Y, train_size=0.5)
+
+
+# In[75]:
+
+
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+y_train = scaler.fit_transform(y_train.reshape(-1, 1))
+y_test = scaler.transform(y_test.reshape(-1, 1))
+print(np.shape(x_train))
+print(np.shape(x_test))
+print(np.shape(y_train))
+
+
+# ## para l1
+
+# In[68]:
+
+
+# Turn up tolerance for faster convergence
+train_samples = int(np.shape(Y)[0]*0.5)
+#regresión logística sobre los dígitos
+for i in np.log(np.arange(1,1000,10)):
+    clf = LogisticRegression(
+        C=i, penalty='l1', solver='saga', tol=0.1)
+        #C=50. / train_samples, penalty='l1', solver='saga', tol=0.1)#,multi_class='multinomial'
+    clf.fit(x_train, y_train)
+    y_pred=clf.predict(x_test)
+    print(f1_score(y_test,y_pred, average='weighted'))
+#     sparsity = np.mean(clf.coef_ == 0) * 100
+#     score = clf.score(x_test, y_test)
+#     # print('Best C % .4f' % clf.C_)
+#     print("Sparsity with L1 penalty: %.2f%%" % sparsity)
+#     print("Test score with L1 penalty: %.4f" % score)
+
+
+# ## para l2
+
+# In[76]:
+
+
+# Turn up tolerance for faster convergence
+train_samples = int(np.shape(Y)[0]*0.5)
+#regresión logística sobre los dígitos
+for i in np.log(np.arange(1,1000,10)):
+    clf = LogisticRegression(
+        C=i, penalty='l2', solver='saga', tol=0.1)
+    clf.fit(x_train,y_train)
+    y_pred=clf.predict(x_test)
+    print(f1_score(y_test,y_pred, average='weighted'))
+#     sparsity = np.mean(clf.coef_ == 0) * 100
+#     score = clf.score(x_test, y_test)
+#     # print('Best C % .4f' % clf.C_)
+#     print("Sparsity with L1 penalty: %.2f%%" % sparsity)
+#     print("Test score with L1 penalty: %.4f" % score)
+
+
+# In[37]:
+
+
+print(np.shape(y_test))
+print(np.shape(y_pred))
+
+
+# In[41]:
 
 
 
