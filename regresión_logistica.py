@@ -62,7 +62,7 @@ print(np.shape(data))
 data[label[0]][1]
 
 
-# In[102]:
+# In[107]:
 
 
 n_max=1200#number of files taken
@@ -79,34 +79,33 @@ for f in files[:n_max]:
         if(len(data[label[0]])>119):
             X=np.append(X,data[label[2]][-n_data:])#toma todos los datos con high
             if(cnt==0):
-                date=np.append(date,data[label[0]][-n_data:])#toma todos los datos con high
+                date=np.append(date,data[label[0]][-n_data:])#toma todos los dates
             cnt+=1
-#        Y=np.append(Y,data[label[4]][-n_data:])#toma todos los datos con high
 X=X.reshape(cnt,n_data)
+#las categorías son los meses del año
 for i in range(len(date)):
-    for j in [8,9,10,11]:
-        if("-{}-".format(j) in date[i]):
-            Y=np.append(Y,i)
-#Y=np.arange(cnt)
-#Y=Y.reshape(n_max,n_data)
-#print(20*3201)
+    for j in range(5,12):
+        if("-0{}-".format(j) in date[i]):
+            Y=np.append(Y,j)
+        elif("-{}-".format(j) in date[i]):
+            Y=np.append(Y,j)
 print(np.shape(X))
 print(np.shape(Y))
 
 
-# In[104]:
+# In[108]:
 
 
 print(len(date))
 31863/120
-print((date))
+print((Y))
 
 
-# In[34]:
+# In[109]:
 
 
 #Y
-#plt.plot(np.arange(50),X[0,:])
+plt.scatter(Y,X[0,:])
 
 
 # In[82]:
