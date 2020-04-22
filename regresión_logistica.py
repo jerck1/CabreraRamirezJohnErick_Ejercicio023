@@ -62,7 +62,7 @@ print(np.shape(data))
 data[label[0]][1]
 
 
-# In[91]:
+# In[102]:
 
 
 n_max=1200#number of files taken
@@ -78,15 +78,15 @@ for f in files[:n_max]:
         label=data.keys()
         if(len(data[label[0]])>119):
             X=np.append(X,data[label[2]][-n_data:])#toma todos los datos con high
-            date=np.append(date,data[label[0]][-n_data:])#toma todos los datos con high
+            if(cnt==0):
+                date=np.append(date,data[label[0]][-n_data:])#toma todos los datos con high
             cnt+=1
-                    #Y=np.append(Y,i)
 #        Y=np.append(Y,data[label[4]][-n_data:])#toma todos los datos con high
 X=X.reshape(cnt,n_data)
-for i in len(date):
+for i in range(len(date)):
     for j in [8,9,10,11]:
-        if("-{}-".format(j) in data[label[0]]):
-
+        if("-{}-".format(j) in date[i]):
+            Y=np.append(Y,i)
 #Y=np.arange(cnt)
 #Y=Y.reshape(n_max,n_data)
 #print(20*3201)
@@ -94,10 +94,12 @@ print(np.shape(X))
 print(np.shape(Y))
 
 
-# In[95]:
+# In[104]:
 
 
 print(len(date))
+31863/120
+print((date))
 
 
 # In[34]:
