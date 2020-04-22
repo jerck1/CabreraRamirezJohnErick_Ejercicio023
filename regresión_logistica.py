@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[12]:
+# In[1]:
 
 
 import glob
@@ -20,13 +20,13 @@ from sklearn.metrics import confusion_matrix
 #%matplotlib inline
 
 
-# In[30]:
+# In[2]:
 
 
 from sklearn.metrics import f1_score
 
 
-# In[13]:
+# In[3]:
 
 
 files=glob.glob("./Stocks/*.txt")
@@ -34,13 +34,13 @@ print(np.shape(files))
 print(files[:20])
 
 
-# In[81]:
+# In[4]:
 
 
 # Solamente uso las columnas  x="high" y="nombre del archivo". Ejm
 
 
-# In[15]:
+# In[5]:
 
 
 data = pd.read_csv("{}".format(files[0]),delimiter=",")
@@ -49,20 +49,20 @@ print(labels)
 print(np.shape(data))
 
 
-# In[80]:
+# In[13]:
 
 
 #las dimensiones son 1249 (cada compañía)
+print(labels[0])
 
 
-# In[94]:
+# In[8]:
 
 
 #tomo todos los elementos que no tengan celdas vacías
-data[label[0]][1]
 
 
-# In[112]:
+# In[15]:
 
 
 n_max=1200#number of files taken
@@ -77,9 +77,9 @@ for f in files[:n_max]:
         data = pd.read_csv("{}".format(f),delimiter=",")
         label=data.keys()
         if(len(data[label[0]])>119):
-            X=np.append(X,data[label[2]][-n_data:])#toma todos los datos con high
+            X=np.append(X,data[labels[2]][-n_data:])#toma todos los datos con high
             if(cnt==0):
-                date=np.append(date,data[label[0]][-n_data:])#toma todos los dates
+                date=np.append(date,data[labels[0]][-n_data:])#toma todos los dates
             cnt+=1
 X=(X.reshape(cnt,n_data)).transpose()
 #las categorías son los meses del año
@@ -93,20 +93,20 @@ print(np.shape(X))
 print(np.shape(Y))
 
 
-# In[114]:
+# In[16]:
 
 
 print(len(date))
 print((Y))
 
 
-# In[116]:
+# In[17]:
 
 
 plt.scatter(Y,X[:,1])
 
 
-# In[115]:
+# In[18]:
 
 
 # Vamos a hacer un split training test
@@ -114,7 +114,7 @@ scaler = StandardScaler()
 x_train, x_test, y_train, y_test = train_test_split(X, Y, train_size=0.5)
 
 
-# In[110]:
+# In[19]:
 
 
 x_train = scaler.fit_transform(x_train)
@@ -128,11 +128,12 @@ print(np.shape(y_train))
 
 # ## para l1
 
-# In[117]:
+# In[20]:
 
 
 # Turn up tolerance for faster convergence
 train_samples = int(np.shape(Y)[0]*0.5)
+f1_av_1=[]
 #regresión logística sobre los dígitos
 for i in np.log(np.arange(1,1000,10)):
     clf = LogisticRegression(
@@ -140,7 +141,7 @@ for i in np.log(np.arange(1,1000,10)):
         #C=50. / train_samples, penalty='l1', solver='saga', tol=0.1)#,multi_class='multinomial'
     clf.fit(x_train, y_train)
     y_pred=clf.predict(x_test)
-    print(f1_score(y_test,y_pred, average='weighted'))
+    f1_av_1=np.append(f1_av_1,f1_score(y_test,y_pred, average='weighted'))
 #     sparsity = np.mean(clf.coef_ == 0) * 100
 #     score = clf.score(x_test, y_test)
 #     # print('Best C % .4f' % clf.C_)
@@ -150,7 +151,7 @@ for i in np.log(np.arange(1,1000,10)):
 
 # ## para l2
 
-# In[120]:
+# In[21]:
 
 
 # lab_enc = preprocessing.LabelEncoder()
@@ -159,37 +160,40 @@ for i in np.log(np.arange(1,1000,10)):
 # # Turn up tolerance for faster convergence
 # train_samples = int(np.shape(Y)[0]*0.5)
 # #regresión logística sobre los dígitos
-# for i in np.log(np.arange(1,1000,10)):
-#     clf = LogisticRegression(
-#         C=i, penalty='l2', solver='saga', tol=0.1)
-#     clf.fit(x_train,y_train)
-#     y_pred=clf.predict(x_test)
-#     print(f1_score(y_test,y_pred, average='weighted'))
-# #     sparsity = np.mean(clf.coef_ == 0) * 100
-# #     score = clf.score(x_test, y_test)
-# #     # print('Best C % .4f' % clf.C_)
-# #     print("Sparsity with L1 penalty: %.2f%%" % sparsity)
-# #     print("Test score with L1 penalty: %.4f" % score)
+f1_av_2=[]
+for i in np.log(np.arange(np.e,1000,10)):
+    clf = LogisticRegression(
+        C=i, penalty='l2', solver='saga', tol=0.1)
+    clf.fit(x_train,y_train)
+    y_pred=clf.predict(x_test)
+    f1_av_2=np.append(f1_av_2,f1_score(y_test,y_pred, average='weighted'))
+#     sparsity = np.mean(clf.coef_ == 0) * 100
+#     score = clf.score(x_test, y_test)
+#     # print('Best C % .4f' % clf.C_)
+#     print("Sparsity with L1 penalty: %.2f%%" % sparsity)
+#     print("Test score with L1 penalty: %.4f" % score)
 
 
-# In[37]:
+# In[30]:
 
 
-print(np.shape(y_test))
-print(np.shape(y_pred))
+plt.figure()
+#plt.scatter(np.log(np.arange(np.e,1000,10)),f1_av_1,label="f1")
+plt.scatter(np.log(np.arange(np.e,1000,10)),f1_av_2)#,label="f2")
 
 
-# In[41]:
+# In[33]:
 
 
-
+print(f1_av_1)
+print(np.log(np.arange(np.e,1000,10)))
 
 
 # # Discusión
 
-# Al aplicar umap se observa el agrupamiento de los elementos en un conjunto de líneas, en las cuales cada número está relacionado con el nombre de un mercado de la siguiente forma:
+# * Se usan los precio más alto de diferentes mercados en los últimos 120 días y la idea es clasificarlas en meses, 
 
-# In[10]:
+# In[23]:
 
 
 print("Mercado"," ","Número")
@@ -199,7 +203,7 @@ for i,f in enumerate(files[:n_max]):
  
 
 
-# Se observa que al aumentar el número de vecinos cercanos se van formando líneas más "nítidas", de hecho para el caso neighbors=2 no se encuentra un agrupamiento, por otro lado, al aumentar la distancia "min_dist" se van haciendo más gruesas algunas partes de las líneas. Si miramos diferentes métricas, se observa que la métrica euclidiana separa los datos en líneas para un numero más pequeño de neighbors que en los otros casos.
+# 
 
 # In[ ]:
 
