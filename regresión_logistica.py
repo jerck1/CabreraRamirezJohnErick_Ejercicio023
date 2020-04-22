@@ -34,10 +34,10 @@ print(np.shape(files))
 print(files[:20])
 
 
-# In[14]:
+# In[81]:
 
 
-# Analizo todas los  x="high" y="nombre del archivo". Ejm
+# Solamente uso las columnas  x="high" y="nombre del archivo". Ejm
 
 
 # In[15]:
@@ -49,44 +49,65 @@ print(labels)
 print(np.shape(data))
 
 
-# In[16]:
+# In[80]:
+
+
+#las dimensiones son 1249 (cada compañía)
+
+
+# In[94]:
 
 
 #tomo todos los elementos que no tengan celdas vacías
+data[label[0]][1]
 
 
-# In[17]:
+# In[91]:
 
 
 n_max=1200#number of files taken
-n_data=50# last days taken
+n_data=120# last days taken
 #n_max=len(files)
 X=[]
+Y=[]
+date=[]
 cnt=0
 for f in files[:n_max]:
     if(os.stat("{}".format(f)).st_size != 0):
         data = pd.read_csv("{}".format(f),delimiter=",")
         label=data.keys()
-        if(len(data[label[0]])>49):
+        if(len(data[label[0]])>119):
             X=np.append(X,data[label[2]][-n_data:])#toma todos los datos con high
+            date=np.append(date,data[label[0]][-n_data:])#toma todos los datos con high
             cnt+=1
+                    #Y=np.append(Y,i)
 #        Y=np.append(Y,data[label[4]][-n_data:])#toma todos los datos con high
 X=X.reshape(cnt,n_data)
-Y=np.arange(cnt)
+for i in len(date):
+    for j in [8,9,10,11]:
+        if("-{}-".format(j) in data[label[0]]):
+
+#Y=np.arange(cnt)
 #Y=Y.reshape(n_max,n_data)
 #print(20*3201)
 print(np.shape(X))
 print(np.shape(Y))
 
 
+# In[95]:
+
+
+print(len(date))
+
+
 # In[34]:
 
 
 #Y
-plt.plot(np.arange(50),X[0,:])
+#plt.plot(np.arange(50),X[0,:])
 
 
-# In[53]:
+# In[82]:
 
 
 # Vamos a hacer un split training test
@@ -94,13 +115,13 @@ scaler = StandardScaler()
 x_train, x_test, y_train, y_test = train_test_split(X, Y, train_size=0.5)
 
 
-# In[75]:
+# In[83]:
 
 
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
-y_train = scaler.fit_transform(y_train.reshape(-1, 1))
-y_test = scaler.transform(y_test.reshape(-1, 1))
+#y_train = scaler.fit_transform(y_train.reshape(-1, 1))
+#y_test = scaler.transform(y_test.reshape(-1, 1))
 print(np.shape(x_train))
 print(np.shape(x_test))
 print(np.shape(y_train))
@@ -130,7 +151,7 @@ for i in np.log(np.arange(1,1000,10)):
 
 # ## para l2
 
-# In[76]:
+# In[78]:
 
 
 # Turn up tolerance for faster convergence
